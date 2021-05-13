@@ -1,11 +1,11 @@
 from flask import *
-from flask_cors import CORS
+# from flask_cors import CORS
 import os
 from shutil import move
 # from logic_res import run
 app = Flask(__name__)
 app.config.from_object(__name__)
-CORS(app, resources={r'/*': {'origins': '*'}})
+# CORS(app, resources={r'/*': {'origins': '*'}})
 
 ALLOWED_EXTENSIONS = {'pdf'}
 

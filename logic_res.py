@@ -6,7 +6,8 @@ import string
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib import pyplot as plt
-from remove_pdf import remove_pdf
+import mpld3
+
 #import matplotlib inline
 
 def run():
@@ -121,15 +122,17 @@ def run():
     # Create a data frame with the scores summary
     summary = pd.DataFrame(scores,index=terms.keys(),columns=['score']).sort_values(by='score',ascending=False)
 
+
     # Create pie chart visualization
-    pie = plt.figure(figsize=(15,15))
-    plt.pie(summary['score'], labels=summary.index, explode = (0.1,0,0,0,0,0.1), autopct='%1.0f%%',shadow=True,startangle=190)
+    pie = plt.figure(figsize=(8,6))
+    plt.pie(summary['score'], labels=summary.index, explode = (0.0,0,0,0,0,0.0), autopct='%0.3f%%',shadow=True,startangle=190)
     plt.title('Industrial Engineering Candidate - Resume Decomposition by Areas')
     plt.axis('equal')
-  
+
 
     # Save pie chart as a .png file
-    pie.savefig('static/resume_screening_results.png')
+    pie.savefig('static/ressume_screening_results.png')
+    mpld3.save_html(pie,"templates/test.html")
     #remove old cv
     #remove_pdf()
 

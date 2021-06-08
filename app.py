@@ -1,18 +1,26 @@
 from flask import *
-# from flask_cors import CORS
+from flask_cors import CORS
 import os
 from shutil import move
+from werkzeug.utils import secure_filename
 # from logic_res import run
 app = Flask(__name__)
 app.config.from_object(__name__)
-# CORS(app, resources={r'/*': {'origins': '*'}})
+CORS(app, resources={r'/*': {'origins': '*'}})
 
-ALLOWED_EXTENSIONS = {'pdf'}
+ALLOWED_EXTENSIONS = set(['pdf', 'txt'])
+
+UPLOAD_FOLDER = 'uploaded_files'
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 @app.route('/')
@@ -58,16 +66,19 @@ PRE = [
     {
         'title': 'Full-Stack-Developer',
         'config': 'Jack Kerouac',
+        'file': 'bro',
         'read': True
     },
     {
         'title': 'Manager',
         'config': 'Jack Kerouac',
+        'file': '',
         'read': True
     },
     {
         'title': 'Scrum Master',
         'config': 'Jack Kerouac',
+        'file': '',
         'read': True
     },
 ]
@@ -81,6 +92,7 @@ def presets():
         PRE.append({
             'title': post_data.get('title'),
             'config': post_data.get('config'),
+            'file': post_data.get('file'),
             'read': post_data.get('read')
         })
         response_object['message'] = 'Book added!'
@@ -88,6 +100,17 @@ def presets():
         response_object['pre'] = PRE
     return jsonify(response_object)
 
+
+@app.route('/file', methods=['POST'])
+def upload_file():
+    print(' * received form with', list(request.form.items()))
+    # check if the post request has the file part
+    for file in request.files.getlist('files'):
+        if file and file.filename.split('.')[-1].lower() in ALLOWED_EXTENSIONS:
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            print(' * file uploaded', filename)
+    return redirect('/')
 
 # @app.route('/success', methods=['POST'])
 # def success():

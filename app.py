@@ -8,20 +8,6 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
 
-ALLOWED_EXTENSIONS = set(['pdf', 'txt'])
-
-UPLOAD_FOLDER = 'uploaded_files'
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
-
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 
 @app.route('/')
 def upload():
@@ -33,9 +19,6 @@ def upload():
 @app.route('/ping', methods=['GET'])
 def ping_pong():
     return jsonify('pong!')
-
-
-app = Flask(__name__)
 
 
 @app.route('/books', methods=['GET'])
@@ -85,12 +68,22 @@ def presets():
     return jsonify(response_object)
 
 
+UPLOAD_FOLDER = 'uploaded_files'
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+
 @app.route('/file', methods=['POST'])
 def upload_file():
     print(' * received form with', list(request.form.items()))
     # check if the post request has the file part
     for file in request.files.getlist('files'):
+        print(file.filename)
         if file and file.filename.split('.')[-1].lower() in ALLOWED_EXTENSIONS:
+            print(UPLOAD_FOLDER)
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             print(' * file uploaded', filename)
@@ -110,37 +103,37 @@ def upload_file():
 #             return "file not supported"
 
 
-ALLOWED_EXTENSIONS = {'pdf'}
+# ALLOWED_EXTENSIONS = {'pdf'}
 
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+# def allowed_file(filename):
+#     return '.' in filename and \
+#            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route('/')
-def upload():
-    return render_template("index.html")
+# @app.route('/')
+# def upload():
+#     return render_template("index.html")
 
 
-@app.route('/success', methods=['POST'])
-def success():
-    if request.method == 'POST':
-        f = request.files['file']
-        if(allowed_file(f.filename)):
-            f.save(f.filename)
-            os.rename(f.filename, 'cv.pdf')
-            run()
-            select = request.form.get('comp_select')
-            return render_template("layout.html", name=f.filename, select=select)
-        else:
-            return render_template("404.html", variable="file not suppored")
+# @app.route('/success', methods=['POST'])
+# def success():
+#     if request.method == 'POST':
+#         f = request.files['file']
+#         if(allowed_file(f.filename)):
+#             f.save(f.filename)
+#             os.rename(f.filename, 'cv.pdf')
+#             run()
+#             select = request.form.get('comp_select')
+#             return render_template("layout.html", name=f.filename, select=select)
+#         else:
+#             return render_template("404.html", variable="file not suppored")
 
 
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'),
-                               'favicon.ico', mimetype='image/png')
+# @app.route('/favicon.ico')
+# def favicon():
+#     return send_from_directory(os.path.join(app.root_path, 'static'),
+#                                'favicon.ico', mimetype='image/png')
 
 
 if __name__ == '__main__':

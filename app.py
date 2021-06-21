@@ -1,107 +1,51 @@
 from flask import *
-from flask_cors import CORS
 import os
-from shutil import move
-# from logic_res import run
+import res as test
+from flask_cors import CORS
+from werkzeug.utils import secure_filename
+
+key = os.urandom(24)
+app.secret_key = key
 app = Flask(__name__)
-app.config.from_object(__name__)
-CORS(app, resources={r'/*': {'origins': '*'}})
+
+cors = CORS(app, resources={r"/": {"origins": "https://testt.tiiny.site/"}})
 
 ALLOWED_EXTENSIONS = {'pdf'}
-
-
 def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS 
 
-
-@app.route('/')
-def upload():
-    return render_template("index.html")
-
-# sanity check route
-
-
-@app.route('/ping', methods=['GET'])
-def ping_pong():
-    return jsonify('pong!')
-
-
-BOOKS = [
-    {
-        'title': 'On the Road',
-        'author': 'Jack Kerouac',
-        'read': True
-    },
-    {
-        'title': 'Harry Potter and the Philosopher\'s Stone',
-        'author': 'J. K. Rowling',
-        'read': False
-    },
-    {
-        'title': 'Green Eggs and Ham',
-        'author': 'Dr. Seuss',
-        'read': True
-    }
-]
-
-
-@app.route('/books', methods=['GET'])
-def all_books():
-    return jsonify({
-        'status': 'success',
-        'books': BOOKS
-    })
 
 
 PRE = [
-    {
-        'title': 'Full-Stack-Developer',
-        'config': 'Jack Kerouac',
-        'read': True
-    },
-    {
-        'title': 'Manager',
-        'config': 'Jack Kerouac',
-        'read': True
-    },
-    {
-        'title': 'Scrum Master',
-        'config': 'Jack Kerouac',
-        'read': True
-    },
-]
+    
+]  
 
 
-@app.route('/pre', methods=['GET', 'POST'])
+@app.route('/')
+def hello():
+    return redirect("https://testt.tiiny.site/", code=302)
+
+@app.route('/send', methods=['POST'])
+#@cross_origin(origin='localhost',headers=['Content- Type','Authorization'])
+def foo():
+    uploaded_file = request.files['file']
+    if uploaded_file.filename != '':
+        uploaded_file.save(uploaded_file.filename)
+        #os.rename(uploaded_file.filename, 'cv.pdf')
+        test.cleaning_json()
+        test.pdf_to_json(uploaded_file.filename)
+        test.run()
+        result = test.run()
+        test.get_job()
+        #test.cleaning_json()
+    return render_template("layout.html", result = result) 
+
+
+@app.route('/jobs')
 def presets():
-    response_object = {'status': 'success'}
-    if request.method == 'POST':
-        post_data = request.get_json()
-        PRE.append({
-            'title': post_data.get('title'),
-            'config': post_data.get('config'),
-            'read': post_data.get('read')
-        })
-        response_object['message'] = 'Book added!'
-    else:
-        response_object['pre'] = PRE
-    return jsonify(response_object)
-
-
-# @app.route('/success', methods=['POST'])
-# def success():
-#     if request.method == 'POST':
-#         f = request.files['file']
-#         if(allowed_file(f.filename)):
-#             f.save(f.filename)
-#             os.rename(f.filename, 'cv.pdf')
-#             run()
-
-#             return render_template("layout.html", name=f.filename)
-#         else:
-#             return "file not supported"
-
+    #post_data = request.get_json()
+    return test.get_job()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug = True)  

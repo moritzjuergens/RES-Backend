@@ -39,7 +39,7 @@ import json
 from sklearn.preprocessing import LabelEncoder
 #from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
-#from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix
 #warnings.filterwarnings('ignore')
 
 
@@ -62,11 +62,11 @@ def cleanString(s):
   s = re.sub('\s+', ' ', s)  # remove extra whitespace
   return s
   
-def vectorize(requiredText,):
+def vectorize(requiredText, mf):
   word_vectorizer = TfidfVectorizer(
     sublinear_tf=True,
     stop_words='english',
-    max_features=numbers_of_rows)
+    max_features=mf)
   word_vectorizer.fit(requiredText)
   WordFeatures = word_vectorizer.transform(requiredText)
   return WordFeatures
@@ -137,124 +137,18 @@ def run(jsonfile="testResume.json"):
 
     global resumeDataSet
     global numbers_of_rows
-    #resumeDataSet = pd.read_json('dataset.json',lines=True)
-    #resumeDataSet = pd.read_csv('resume_dataset.csv' ,encoding='utf-8')
-    
     resumeDataSet['cleaned_resume'] = ''
-    resumeDataSet.head()
-
-
-    #targetCounts = resumeDataSet['Category'].value_counts()
-    #targetLabels  = resumeDataSet['Category'].unique()
-    # Make square figures and axes
-    #plt.figure(1, figsize=(25,25))
-    #the_grid = GridSpec(2, 2)
-
-
-    #cmap = plt.get_cmap('coolwarm')
-    #colors = [cmap(i) for i in np.linspace(0, 1, 3)]
-    #plt.subplot(the_grid[0, 1], aspect=1, title='CATEGORY DISTRIBUTION')
-
-    #source_pie = plt.pie(targetCounts, labels=targetLabels, autopct='%1.1f%%', shadow=True, colors=colors)
-    #plt.show()
-
-
-        
-    resumeDataSet['cleaned_resume'] = resumeDataSet.Resume.apply(lambda x: cleanResume(x))
-
-    #nltk.download('stopwords')
-    #nltk.download('punkt')
-    print ("Displaying the distinct categories of resume and the number of records belonging to each category -")
-    print (resumeDataSet['Category'].value_counts())
-
-    oneSetOfStopWords = set(stopwords.words('english')+['``',"''"])
-    totalWords =[]
-    Sentences = resumeDataSet['Resume'].values
-    #Sentences = resumeDataSet['content'].values
-    cleanedSentences = ""
-    for i in range(0,160):
-        cleanedText = cleanResume(Sentences[i])
-        cleanedSentences += cleanedText
-        requiredWords = nltk.word_tokenize(cleanedText)
-        for word in requiredWords:
-            if word not in oneSetOfStopWords and word not in string.punctuation:
-                totalWords.append(word)
-        
-    wordfreqdist = nltk.FreqDist(totalWords)
-    mostcommon = wordfreqdist.most_common(50)
-    #print(mostcommon)
-
-    #wc = WordCloud().generate(cleanedSentences)
-    #plt.figure(figsize=(15,15))
-    #plt.imshow(wc, interpolation='bilinear')
-    #plt.axis("off")
-    #plt.show()
-
-    
-
-    var_mod = ['Category']
-    #var_mod = ['SKILLS']
-    ##hier geändert
-    le = LabelEncoder()
-    for i in var_mod:
-        resumeDataSet[i] = le.fit_transform(resumeDataSet[i])
-
-
-
-    requiredText = resumeDataSet['cleaned_resume'].values
-    requiredTarget = resumeDataSet['Category'].values
-    
-
-
-
-    word_vectorizer = TfidfVectorizer(
-        sublinear_tf=True,
-        stop_words='english',
-        max_features=numbers_of_rows)
-    word_vectorizer.fit(requiredText)
-    WordFeatures = word_vectorizer.transform(requiredText)
-
-    #print ("Feature completed .....")
-
-    X_train,X_test,y_train,y_test = train_test_split(WordFeatures,requiredTarget,random_state=0, test_size=0.2)
-    #print(X_train.shape)
-    #print(X_test.shape)
-
-    clf = OneVsRestClassifier(KNeighborsClassifier())
-    clf.fit(X_train, y_train)
-    prediction = clf.predict(X_test)
-    #print(X_test)
-    #print('Accuracy of KNeighbors Classifier on training set: {:.2f}'.format(clf.score(X_train, y_train)))
-    #print('Accuracy of KNeighbors Classifier on test set: {:.2f}'.format(clf.score(X_test, y_test)))
-
-    print("\n Classification report for classifier %s:\n%s\n" % (clf, metrics.classification_report(y_test, prediction)))
-
-    realPrediction = clf.predict(X_train[5])
-
-    resumeDataSet = pd.read_csv('UpdatedResumeDataSet.csv' ,encoding='utf-8')
-    resumeDataSet['cleaned_resume'] = ''
-    testDataSet = pd.read_json(jsonfile)
-    #testDataSet = pd.read_json('test.json')
+    testDataSet = pd.read_json('testResume.json')
     testDataSet['cleaned_resume']=''
     resumeDataSet.head()
     testDataSet.head()
-
-
-
-
-
-
-
-
-
-    """####Pre-Process the Dataset"""
-
     targetCounts = resumeDataSet['Category'].value_counts()
     targetLabels  = resumeDataSet['Category'].unique()
-        
+    
+
+
     resumeDataSet['cleaned_resume'] = resumeDataSet.Resume.apply(lambda x: cleanString(x))
     testDataSet['cleaned_resume'] = testDataSet.Resume.apply(lambda x: cleanString(x))
-
     var_mod = ['Category']
     le = LabelEncoder()
     for i in var_mod:
@@ -262,42 +156,39 @@ def run(jsonfile="testResume.json"):
 
     requiredText = resumeDataSet['cleaned_resume'].values
     requiredText2 = testDataSet['cleaned_resume'].values
+    requiredTarget = resumeDataSet['Category'].values
+    WordFeatures = vectorize(requiredText, 200)
+    WordFeatures2 = vectorize(requiredText2, 200)
 
-    WordFeatures = vectorize(requiredText)
-    WordFeatures2 = vectorize(requiredText2)
-    #why 1500?
-    WordFeatures2.resize(1,numbers_of_rows)
-    #print(WordFeatures2.shape)
-    #print(WordFeatures.shape)
-
-    """####Train the model"""
-
+    #Train the model
     X_train,X_test,y_train,y_test = train_test_split(WordFeatures,requiredTarget,random_state=0, test_size=0.2)
-
     clf = OneVsRestClassifier(KNeighborsClassifier())
     clf.fit(X_train, y_train)
 
-    """####Predict
+    
 
-    first we use the test data to validate our model
-    """
-
+    #Predict
+    #first we use the test data to validate our model
     prediction = clf.predict(X_test)
+    #print('Accuracy of KNeighbors Classifier on training set: {:.2f}'.format(clf.score(X_train, y_train)))
+    #print('Accuracy of KNeighbors Classifier on test set: {:.2f}'.format(clf.score(X_test, y_test)))
+    #print("\n Classification report for classifier %s:\n%s\n" % (clf, metrics.classification_report(y_test, prediction)))
 
-    """and then we can use a singular x value and let the model predict the label for us"""
-    
 
-    print('Calculating the metrics...')
-    print("Accuracy:{}".format(accuracy_score(y_test, prediction)))
-    #print("recision_score:{}".format(precision_score(y_test, prediction, average='macro')))
-    #print("recall_score:{}".format(precision_score(y_test, prediction, average='macro')))
-    
 
-    #print(classification_report(y_test, prediction))
-    #print(confusion_matrix(y_test, prediction))
-    #roc_auc_score(y_test, prediction)
+    #then we can use a singular x value and let the model predict the label for us
     realPrediction = clf.predict(WordFeatures2)
-    return(targetLabels[realPrediction[0]])
+    return(targetLabels[realPrediction][0])
+   
+    
+
+
+
+
+
+
+
+
 
 
 
@@ -347,7 +238,7 @@ def cleaning_json(jsonfile="testResume.json"):
 def correct_result(pdf_file, category,jsonfile="testResume.json" ):
     #s = '"{}"'.format(str(pdf_to_json(pdf_file,jsonfile)))
     List = [category, str(pdf_to_json(pdf_file,jsonfile))]
-    with open('UpdatedResumeDataSet.csv', 'a') as f_object:
+    with open('UpdatedResumeDataSet.csv', 'a', newline='',encoding='utf-8') as f_object:
         writer_object = writer(f_object)
         writer_object.writerow(List)
         f_object.close()

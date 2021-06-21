@@ -4,3 +4,14 @@ textract==1.6.3
 pandas==1.2.4
 matplotlib==3.4.1
 gunicorn
+
+mpld3
+careerjet_api
+numpy
+sklearn
+pathlib
+nltk
+wordcloud
+seaborn
+scipy
+flask_cors

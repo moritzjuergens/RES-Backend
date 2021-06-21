@@ -1,8 +1,10 @@
 from flask import *
+
 import os
 import res as test
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
+
 
 key = os.urandom(24)
 app.secret_key = key

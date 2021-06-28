@@ -1,7 +1,7 @@
 from flask import *
 
 import os
-import res as test
+import res as res
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
@@ -10,8 +10,10 @@ key = os.urandom(24)
 app.secret_key = key
 app = Flask(__name__)
 
-cors = CORS(app, resources={r"/": {"origins": "https://testt.tiiny.site/"}})
+#allow front end           
+cors = CORS(app, resources={r"/": {"origins": "https://testt.tiiny.site/"}})   #front end site   
 
+#allow only pdf 
 ALLOWED_EXTENSIONS = {'pdf'}
 def allowed_file(filename):
     return '.' in filename and \
@@ -19,35 +21,40 @@ def allowed_file(filename):
 
 
 
-PRE = [
-    
-]  
 
-
+#home route => redirect to front end
 @app.route('/')
 def hello():
-    return redirect("https://testt.tiiny.site/", code=302)
+    return redirect("https://testt.tiiny.site/", code=302)    #front end site
 
+
+#send => run our code (algor) 
 @app.route('/send', methods=['POST'])
 #@cross_origin(origin='localhost',headers=['Content- Type','Authorization'])
-def foo():
+def run():
+    #get the uploaded file
     uploaded_file = request.files['file']
     if uploaded_file.filename != '':
         uploaded_file.save(uploaded_file.filename)
         #os.rename(uploaded_file.filename, 'cv.pdf')
-        test.cleaning_json()
-        test.pdf_to_json(uploaded_file.filename)
-        test.run()
-        result = test.run()
-        test.get_job()
+        #delte old json content 
+        res.cleaning_json()
+        #convert pdf to json
+        res.pdf_to_json(uploaded_file.filename)
+        #knn classifier
+        #res.run()
+        category = res.run()
+        res.get_job()
         #test.cleaning_json()
-    return render_template("layout.html", result = result) 
+    return render_template("layout.html", result = category) 
 
 
+
+#get the jobs of  the result catogray and return as json structure for the front end
 @app.route('/jobs')
-def presets():
+def getjOB():
     #post_data = request.get_json()
-    return test.get_job()
+    return res.get_job()
 
 if __name__ == '__main__':
     app.run(debug = True)  

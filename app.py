@@ -11,7 +11,7 @@ app.secret_key = key
 app = Flask(__name__)
 
 #allow front end           
-cors = CORS(app, resources={r"/": {"origins": "https://testt.tiiny.site/"}})   #front end site   
+cors = CORS(app, resources={r"/": {"origins": "https://hopeful-hermann-97c612.netlify.app/"}})   #front end site   
 
 #allow only pdf 
 ALLOWED_EXTENSIONS = {'pdf'}
@@ -25,7 +25,7 @@ def allowed_file(filename):
 #home route => redirect to front end
 @app.route('/')
 def hello():
-    return redirect("https://testt.tiiny.site/", code=302)    #front end site
+    return redirect("https://hopeful-hermann-97c612.netlify.app/", code=302)    #front end site
 
 
 #send => run our code (algor) 

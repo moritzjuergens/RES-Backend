@@ -1,4 +1,4 @@
-#!/Users/moritzjurgens/res/backend/env/bin/python3.9
+#!/Users/moritzjurgens/res/res-backend/env/bin/python3.9
 # -*- coding: utf-8 -*-
 import re
 import sys

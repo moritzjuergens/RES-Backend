@@ -1,6 +1,8 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+/env/
+/uploaded_files/
 # Datasource local storage ignored files
 /../../../../../../:\Users\Mo\OneDrive - Hochschule für Technik und Wirtschaft Berlin\data\.idea/dataSources/
 /dataSources.local.xml

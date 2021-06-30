@@ -164,26 +164,27 @@ def run(jsonfile="Resume.json"):
     resumeDataSet['cleaned_resume'] = resumeDataSet.Resume.apply(
         lambda x: cleanResume(x))
 
-    nltk.download('stopwords')
-    # nltk.download('punkt')
-    print("Displaying the distinct categories of resume and the number of records belonging to each category -")
-    print(resumeDataSet['Category'].value_counts())
+#     import nltk
+#     nltk.download('stopwords')
+#     nltk.download('punkt')
+#     print("Displaying the distinct categories of resume and the number of records belonging to each category -")
+#     print(resumeDataSet['Category'].value_counts())
 
-    oneSetOfStopWords = set(stopwords.words('english')+['``', "''"])
-    totalWords = []
-    Sentences = resumeDataSet['Resume'].values
-  # Sentences = resumeDataSet['content'].values
-    cleanedSentences = ""
-    for i in range(0, 160):
-        cleanedText = cleanResume(Sentences[i])
-        cleanedSentences += cleanedText
-        requiredWords = nltk.word_tokenize(cleanedText)
-        for word in requiredWords:
-            if word not in oneSetOfStopWords and word not in string.punctuation:
-                totalWords.append(word)
+#     oneSetOfStopWords = set(stopwords.words('english')+['``', "''"])
+#     totalWords = []
+#     Sentences = resumeDataSet['Resume'].values
+#   # Sentences = resumeDataSet['content'].values
+#     cleanedSentences = ""
+#     for i in range(0, 160):
+#         cleanedText = cleanResume(Sentences[i])
+#         cleanedSentences += cleanedText
+#         requiredWords = nltk.word_tokenize(cleanedText)
+#         for word in requiredWords:
+#             if word not in oneSetOfStopWords and word not in string.punctuation:
+#                 totalWords.append(word)
 
-    wordfreqdist = nltk.FreqDist(totalWords)
-    mostcommon = wordfreqdist.most_common(50)
+#     wordfreqdist = nltk.FreqDist(totalWords)
+#     mostcommon = wordfreqdist.most_common(50)
     # print(mostcommon)
 
     # wc = WordCloud().generate(cleanedSentences)
@@ -290,8 +291,12 @@ def run(jsonfile="Resume.json"):
     return(targetLabels[realPrediction[0]])
 
 
-def get_job():
-    keyword = run()
+def prediction():
+    return run()
+
+
+def get_job(keyword):
+    #keyword = run()
 
     cj = CareerjetAPIClient("en_GB")
 

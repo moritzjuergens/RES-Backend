@@ -51,6 +51,8 @@ if not os.path.exists(UPLOAD_FOLDER):
 @app.route('/send', methods=['POST'])
 # @cross_origin(origin='localhost',headers=['Content- Type','Authorization'])
 def run():
+    #response_object = {'status': 'success'}
+
     print(' * received form with', list(request.form.items()))
     # get the uploaded file
     for uploaded_file in request.files.getlist('files'):
@@ -65,27 +67,35 @@ def run():
             #os.rename(uploaded_file.filename, 'cv.pdf')
             # delte old json content
 
-            # res.cleaning_json()
+            res.cleaning_json()
 
             # convert pdf to json
-            # res.pdf_to_json(uploaded_file.filename)
+            res.pdf_to_json(uploaded_file.filename)
             # knn classifier
             # res.run()
-            #category = res.run()
+            category = res.run()
             # res.get_job()
         # test.cleaning_json()
-    return 'Success'
+            print(category)
+    #response_object['message'] = category
+
+    return category
 
 
 # get the jobs of  the result catogray and return as json structure for the front end
-@app.route('/jobs')
+@app.route('/jobs', methods=['POST'])
 def getjOB(jsonfile="data.json"):
-    #post_data = request.get_json()
-    # return res.get_job()
-    f = open(jsonfile)
-    data = json.load(f)
 
-    return data
+    keyword = "operations manager"
+    print(keyword)
+
+    #f = open(jsonfile)
+    #data = json.load(f)
+    #post_data = request.get_json(keyword)
+
+    # return res.get_job()
+    return jsonify(res.get_job(keyword))
+    # return data
 
 
 if __name__ == '__main__':

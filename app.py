@@ -86,7 +86,7 @@ def run():
 @app.route('/jobs', methods=['POST'])
 def getjOB(jsonfile="data.json"):
 
-    keyword = "operations manager"
+    keyword = request.data
     print(keyword)
 
     #f = open(jsonfile)

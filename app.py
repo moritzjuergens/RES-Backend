@@ -70,7 +70,7 @@ def run():
             res.cleaning_json()
 
             # convert pdf to json
-            res.pdf_to_json(uploaded_file.filename)
+            res.pdf_to_json("uploaded_files/"+uploaded_file.filename)
             # knn classifier
             # res.run()
             category = res.run()

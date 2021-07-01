@@ -35,11 +35,11 @@ def allowed_file(filename):
 @app.route('/')
 def hello():
     # front end site
-    # return redirect("https://hopeful-hermann-97c612.netlify.app/", code=302)
-    return redirect('/ping', code=302)
+    return redirect("https://hopeful-hermann-97c612.netlify.app/", code=302)
+    #return redirect('/ping', code=302)
 
-
-UPLOAD_FOLDER = 'uploaded_files'
+UPLOAD_FOLDER = join(dirname(realpath(__file__)), 'uploaded_files')
+#UPLOAD_FOLDER = 'uploaded_files'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -75,7 +75,7 @@ def run():
             # res.run()
             category = res.run()
             # res.get_job()
-        # test.cleaning_json()
+        # res.cleaning_json()
             print(category)
     #response_object['message'] = category
 

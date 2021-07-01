@@ -35,8 +35,8 @@ def allowed_file(filename):
 @app.route('/')
 def hello():
     # front end site
-    # return redirect("https://hopeful-hermann-97c612.netlify.app/", code=302)
-    return redirect('/ping', code=302)
+    return redirect("https://hopeful-hermann-97c612.netlify.app/", code=302)
+    #return redirect('/ping', code=302)
 
 
 UPLOAD_FOLDER = 'uploaded_files'
@@ -63,7 +63,7 @@ def run():
                 app.config['UPLOAD_FOLDER'], filename))
             print(' * file uploaded', filename)
 
-            # uploaded_file.save(uploaded_file.filename)
+            uploaded_file.save(uploaded_file.filename)
             #os.rename(uploaded_file.filename, 'cv.pdf')
             # delte old json content
 

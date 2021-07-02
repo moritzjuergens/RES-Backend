@@ -18,13 +18,6 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 # allow only pdf
 ALLOWED_EXTENSIONS = {'pdf'}
 
-# sanity check route
-
-
-@app.route('/ping', methods=['GET'])
-def ping_pong():
-    return jsonify('pong!')
-
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -35,8 +28,7 @@ def allowed_file(filename):
 @app.route('/')
 def hello():
     # front end site
-    # return redirect("https://hopeful-hermann-97c612.netlify.app/", code=302)
-    return redirect('/ping', code=302)
+    return redirect("https://hopeful-hermann-97c612.netlify.app/", code=302)
 
 
 UPLOAD_FOLDER = 'uploaded_files'
@@ -84,18 +76,20 @@ def run():
 
 # get the jobs of  the result catogray and return as json structure for the front end
 @app.route('/jobs', methods=['POST'])
-def getjOB(jsonfile="data.json"):
+def getjOB():
 
-    keyword = request.json
-    #keyword = "operations manager"
-    print(keyword)
+    r = request.json
+    print("r:", r)
+
+    job = r['jobtitle']
+    location = r['location']
 
     #f = open(jsonfile)
     #data = json.load(f)
     #post_data = request.get_json(keyword)
 
     # return res.get_job()
-    return jsonify(res.get_job(keyword))
+    return jsonify(res.get_job(job, location))
     # return data
 
 

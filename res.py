@@ -295,13 +295,13 @@ def prediction():
     return run()
 
 
-def get_job(keyword):
+def get_job(keyword, location):
     #keyword = run()
 
     cj = CareerjetAPIClient("en_GB")
 
     result_json = cj.search({
-                            'location': 'berlin',
+                            'location': location,
                             'keywords': keyword,
                             'affid': '213e213hd12344552',
                             'user_ip': '11.22.33.44',

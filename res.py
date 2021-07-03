@@ -24,29 +24,17 @@ from nltk.corpus import stopwords
 from csv import writer
 from careerjet_api import CareerjetAPIClient
 import pandas as pd
-# import numpy as np
-# import matplotlib.pyplot as plt
 import warnings
-# from sklearn.naive_bayes import MultinomialNB
 from sklearn.multiclass import OneVsRestClassifier
 from sklearn import metrics
 from sklearn.metrics import accuracy_score
-# from pandas.plotting import scatter_matrix
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import metrics
-# from pathlib import Path
 import nltk
-# from wordcloud import WordCloud
-# import seaborn as sns
-# from matplotlib.gridspec import GridSpec
-# from sklearn.metrics import accuracy_score
-# from sklearn.metrics import confusion_matrix
-# warnings.filterwarnings('ignore')
 
 
 # dataset
 resumeDataSet = pd.read_csv('ResumeDataSet.csv', encoding='utf-8')
-# resumeDataSet = pd.read_csv('LinkedIn_ProfileDataset_Text_Role_200.csv' ,encoding='utf-8')
 numbers_of_rows = 1500
 """####Functions"""
 
@@ -141,8 +129,7 @@ def run(jsonfile="Resume.json"):
 
     global resumeDataSet
     global numbers_of_rows
-# resumeDataSet = pd.read_json('dataset.json',lines=True)
-# resumeDataSet = pd.read_csv('resume_dataset.csv' ,encoding='utf-8')
+
 
     resumeDataSet['cleaned_resume'] = ''
     resumeDataSet.head()
@@ -163,35 +150,6 @@ def run(jsonfile="Resume.json"):
 
     resumeDataSet['cleaned_resume'] = resumeDataSet.Resume.apply(
         lambda x: cleanResume(x))
-
-#     import nltk
-#     nltk.download('stopwords')
-#     nltk.download('punkt')
-#     print("Displaying the distinct categories of resume and the number of records belonging to each category -")
-#     print(resumeDataSet['Category'].value_counts())
-
-#     oneSetOfStopWords = set(stopwords.words('english')+['``', "''"])
-#     totalWords = []
-#     Sentences = resumeDataSet['Resume'].values
-#   # Sentences = resumeDataSet['content'].values
-#     cleanedSentences = ""
-#     for i in range(0, 160):
-#         cleanedText = cleanResume(Sentences[i])
-#         cleanedSentences += cleanedText
-#         requiredWords = nltk.word_tokenize(cleanedText)
-#         for word in requiredWords:
-#             if word not in oneSetOfStopWords and word not in string.punctuation:
-#                 totalWords.append(word)
-
-#     wordfreqdist = nltk.FreqDist(totalWords)
-#     mostcommon = wordfreqdist.most_common(50)
-    # print(mostcommon)
-
-    # wc = WordCloud().generate(cleanedSentences)
-    # plt.figure(figsize=(15,15))
-    # plt.imshow(wc, interpolation='bilinear')
-    # plt.axis("off")
-    # plt.show()
 
     var_mod = ['Category']
     # var_mod = ['SKILLS']
@@ -232,7 +190,6 @@ def run(jsonfile="Resume.json"):
     resumeDataSet = pd.read_csv('ResumeDataSet.csv', encoding='utf-8')
     resumeDataSet['cleaned_resume'] = ''
     testDataSet = pd.read_json(jsonfile)
-    # testDataSet = pd.read_json('test.json')
     testDataSet['cleaned_resume'] = ''
     resumeDataSet.head()
     testDataSet.head()
@@ -257,10 +214,8 @@ def run(jsonfile="Resume.json"):
 
     WordFeatures = vectorize(requiredText)
     WordFeatures2 = vectorize(requiredText2)
-    # why 1500?
     WordFeatures2.resize(1, numbers_of_rows)
-    # print(WordFeatures2.shape)
-    # print(WordFeatures.shape)
+
 
     """####Train the model"""
 
@@ -281,12 +236,8 @@ def run(jsonfile="Resume.json"):
 
     print('Calculating the metrics...')
     print("Accuracy:{}".format(accuracy_score(y_test, prediction)))
-    # print("recision_score:{}".format(precision_score(y_test, prediction, average='macro')))
-    # print("recall_score:{}".format(precision_score(y_test, prediction, average='macro')))
+   
 
-    # print(classification_report(y_test, prediction))
-    # print(confusion_matrix(y_test, prediction))
-    # roc_auc_score(y_test, prediction)
     realPrediction = clf.predict(WordFeatures2)
     return(targetLabels[realPrediction[0]])
 
@@ -294,10 +245,9 @@ def run(jsonfile="Resume.json"):
 def prediction():
     return run()
 
-
+#get the jobs as json fron the api
 def get_job(keyword, location):
-    #keyword = run()
-
+    #language
     cj = CareerjetAPIClient("en_GB")
 
     result_json = cj.search({
@@ -309,9 +259,10 @@ def get_job(keyword, location):
                             'user_agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Firefox/31.0'
                             })
     result_json["category"] = keyword
+
     return result_json
 
-
+#delete all the elements from the json file 
 def cleaning_json(jsonfile="Resume.json"):
     # Opening JSON file
     f = open(jsonfile)
@@ -330,7 +281,7 @@ def cleaning_json(jsonfile="Resume.json"):
     # Closing file
     f.close()
 
-
+#add cv to the dataset 
 def correct_result(pdf_file, category, jsonfile="Resume.json"):
     # s = '"{}"'.format(str(pdf_to_json(pdf_file,jsonfile)))
     List = [category, str(pdf_to_json(pdf_file, jsonfile))]
